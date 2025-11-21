@@ -1,0 +1,27 @@
+How to build
+
+In STM32CubeMX generate project for Nucleo-F411RE with settings above (USART1 PA9/PA10).
+
+Open project in STM32CubeIDE.
+
+Replace or add the files in Core/Inc and Core/Src with the code above. If CubeMX generates main.c/main.h, merge or replace relevant parts — ensure huart1 and htim3 are declared as extern in main.h (as above).
+
+Build the project. Fix include paths if necessary (the files use only HAL headers).
+
+Connect ST-Link, flash, open a UART terminal (if you add debug prints) to see logs (the sample code has no printf to save size).
+
+Test: place a finger on the R305 — if enrolled fingerprints exist, fingerprint_search() will return the matched ID and unlock the actuator for 3s.
+
+Enrollment & testing tips
+
+To enroll a fingerprint with the provided API: call fingerprint_enroll(id) from main when admin presses a special keypad combo (not implemented in main loop above). Example: place the code in admin menu: press * → enter admin PIN → choose enroll → choose numeric id (0..1000).
+
+After enrollment, test fingerprint_search() by placing the same finger — it should return the ID.
+
+If fingerprint_search() always returns -1: check wiring, power (R305 needs stable 5V), and UART baud. Also check RX/TX lines (crossed: module TX → MCU RX).
+
+Safety & final notes
+
+If your R305 is powered by 5V, do not connect its TX directly to STM32 RX if the module’s TX is 5V TTL — many modules’ TX is 5V tolerant but the STM32 RX expects 3.3V; usually the MCU sees 5V as HIGH but it's safer to use a level shifter. For module RX (module receiving MCU TX), 3.3V from MCU TX is usually OK.
+
+The storage example is minimal — if you want persistent PIN templates stored in flash or SD, I can add a robust flash write/read routine or FATFS SD logging.
