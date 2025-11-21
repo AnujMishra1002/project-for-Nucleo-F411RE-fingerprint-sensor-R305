@@ -1,5 +1,3 @@
-.
-
 🔐 STM32 Fingerprint + Keypad Smart Door Lock
 
 MCU: Nucleo-F411RE
